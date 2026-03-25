@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react"; 
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
+import Image from "next/image";
 
 export default function Home() {
   const [selected, setSelected] = useState(null);
@@ -61,8 +62,9 @@ export default function Home() {
     <main className="min-h-screen bg-gray-100 text-black px-6 py-6">
 
       <div className="flex justify-between items-center">
-        <img src="/images-removebg-preview.png" className="h-6" />
-        <p className="text-xs tracking-widest text-black">EASTER 2026</p>
+        {/* <img src="/images-removebg-preview.png" className="h-6" /> */}
+        <Image src="/images-removebg-preview.png" width={200} height={100} alt="logog" className="h-3 w-4 object-center"></Image>
+        <p className="text-2xl tracking-widest text-black">EASTER 2026</p>
       </div>
 
       <div className="text-center mt-20">
