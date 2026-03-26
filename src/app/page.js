@@ -63,11 +63,13 @@ export default function Home() {
 
       <div className="flex justify-between items-center">
         {/* <img src="/images-removebg-preview.png" className="h-6" /> */}
-        <Image src="/images-removebg-preview.png" width={200} height={100} alt="logog" className="h-3 w-4 object-center"></Image>
-        <p className="text-2xl tracking-widest text-black">EASTER 2026</p>
+        <Image src="/images-removebg-preview.png" width={200} height={400} alt="logog" className="h-5 w-4 object-center"></Image>
+        <p className="text-lg md:text-2xl lg:text-3xl tracking-widest text-black">Easter Luck Is Here</p>
       </div>
 
-      <div className="text-center mt-20">
+      {
+        revealed==false && (
+           <div className="text-center mt-20">
         <div className="inline-block px-4 py-1 text-xs border border-black/20 rounded-full text-black/80 mb-6">
           LIMITED TIME OFFER
         </div>
@@ -81,14 +83,18 @@ export default function Home() {
           Pick one egg and get an exclusive discount on our IT courses.
         </p>
       </div>
+        )
+      }
+
+     
 
       {/* EGGS */}
       <div className="flex justify-center gap-12 mt-16 text-black">
 
         {/*  OPTIONAL MESSAGE */}
         {revealed && (
-          <p className="absolute mt-[-40px] text-sm text-black/60">
-            You’ve already claimed your Easter reward 🎉
+          <p className="absolute -mt-10 text-xs md:text-xl lg:text-2xl text-black/50">
+            You’ve have claimed your Easter reward 
           </p>
         )}
 
@@ -190,7 +196,7 @@ export default function Home() {
                 </p>
 
                 <a href={`/enroll?d=${discount}`}>
-                  <button className="mt-5 px-6 py-3 bg-[#da2721] rounded-lg hover:scale-105 transition">
+                  <button className="mt-5 px-6 py-3 bg-[#da2721] rounded-lg hover:scale-105 transition text-white">
                     Enroll Now
                   </button>
                 </a>
@@ -201,8 +207,8 @@ export default function Home() {
         )}
       </AnimatePresence>
 
-      <div className="text-center text-xs text-black/50 mt-20">
-        © 2026 Loctech. All rights reserved.
+      <div className=" text-black/50 mt-20 fixed bottom-0 mx-auto flex justify-center w-full">
+      <p className="text-center text-xs md:text-xl lg:text-2xl"> © 2026 Loctech. All rights reserved.</p> 
       </div>
 
     </main>

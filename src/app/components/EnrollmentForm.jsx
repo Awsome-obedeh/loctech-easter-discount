@@ -2,193 +2,264 @@
 
 import { useState } from "react";
 import { useSearchParams } from 'next/navigation';
+import SuccessModal from "./SuccessfulModal";
+import { courses } from "@/lib/courses";
 
 export default function EnrollmentForm() {
-  const searchParams = useSearchParams();
-  let discountPrice = searchParams.get('d') || "0";
-  discountPrice = discountPrice < 40 ? discountPrice : 30;
-  const [form, setForm] = useState({
-    username: "",
-    phone: "",
-    email: "",
-    modeOfLearning: "",
-    course: "",
+    const searchParams = useSearchParams();
+    let discountPrice = searchParams.get('d') || "0";
+    discountPrice = discountPrice < 40 ? discountPrice : 30;
+    const [form, setForm] = useState({
+        username: "",
+        phone: "",
+        email: "",
+        modeOfLearning: "",
+        course: "",
 
-  });
+    });
 
-  const [errors, setErrors] = useState({});
+    const [errors, setErrors] = useState({});
+    const [loading, setLoading] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const courses = [
-    "UI/UX Design",
-    "Data Analysis",
-    "Cybersecurity",
-    "Cloud Computing Amazon Web Service",
-    "Cloud Computing Microsoft Azure",
-    "Full-Stack Web Development with Python and Django",
-    "Data Analysis With Excel",
-    "Data Analysis With Python and SQL",
-    "Machine Learning With Python",
-    "Data Analysis with Power BI",
-    "Graphics Design",
-    "Digital Marketing"
-  ];
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-    setErrors({ ...errors, [e.target.name]: "" });
-  };
-
-  const validate = () => {
     let newErrors = {};
+    let finalPrice = ""
+    finalPrice = form.coursePrice - (form.coursePrice * (Number(discountPrice) / 100));
 
-    if (!form.username.trim()) newErrors.name = "Full name is required";
+    const handleChange = (e) => {
+        setForm({ ...form, [e.target.name]: e.target.value });
+        setErrors({ ...errors, [e.target.name]: "" });
+    };
 
-    if (!form.phone.trim()) {
-      newErrors.phone = "Phone number is required";
-    } else if (!/^[0-9]{10,15}$/.test(form.phone)) {
-      newErrors.phone = "Enter a valid phone number";
-    }
+    const handleCourseChange = (e) => {
+        const selectedCourseName = e.target.value;
 
-    if (!form.email.trim()) {
-      newErrors.email = "Email is required";
-    } else if (!/\S+@\S+\.\S+/.test(form.email)) {
-      newErrors.email = "Enter a valid email";
-    }
+        // Find the course object that matches the selected name
+        const selectedCourse = courses.find(c => c.courseName === selectedCourseName);
 
-    if (!form.modeOfLearning) newErrors.mode = "Select learning mode";
-    if (!form.course) newErrors.course = "Select a course";
+        setForm({
+            ...form,
+            course: selectedCourseName,
+            coursePrice: selectedCourse ? selectedCourse.price : ""
+        });
 
-    return newErrors;
-  };
+        setErrors({ ...errors, course: "" });
+    };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+    const validate = () => {
 
-    const validationErrors = validate();
 
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-      return;
-    }
+        if (!form.username.trim()) newErrors.name = "Full name is required";
 
-    // send api
-    try {
+        if (!form.phone.trim()) {
+            newErrors.phone = "Phone number is required";
+        } else if (!/^[0-9]{10,15}$/.test(form.phone)) {
+            newErrors.phone = "Enter a valid phone number";
+        }
 
-      const res = await fetch('api/enroll', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...form, discountPrice }),
-      })
+        if (!form.email.trim()) {
+            newErrors.email = "Email is required";
+        } else if (!/\S+@\S+\.\S+/.test(form.email)) {
+            newErrors.email = "Enter a valid email";
+        }
 
-      console.log(res)
-      if(res.status==400){
-        setErrors("This email is existing already")
-      }
-    }
+        if (!form.modeOfLearning) newErrors.mode = "Select learning mode";
+        if (!form.course) newErrors.course = "Select a course";
 
-    catch (err) {
-      setErrors(err.message)
-      console.log("this is the error", err)
-    }
-  };
+        return newErrors;
+    };
 
-  return (
-    <main className="min-h-screen bg-white flex items-center justify-center px-6 py-10">
+    const handleSubmit = async (e) => {
 
-      <div className="w-full max-w-xl bg-white p-8 rounded-2xl border border-gray-200 shadow-lg">
+        e.preventDefault();
 
-        <img src="/images-removebg-preview.png" className="h-10 mx-auto mb-4" />
 
-        <h1 className="text-3xl font-bold text-center text-black mb-2">
-          Enroll in a Course
-        </h1>
+        const validationErrors = validate();
 
-        <p className="text-center text-gray-600 mb-6 text-sm">
-          Claim your Easter discount before it expires 
-        </p>
+        if (Object.keys(validationErrors).length > 0) {
+            setErrors(validationErrors);
+            return;
+        }
 
-        <form onSubmit={handleSubmit} className="space-y-5">
+        // send api
+        try {
+            setLoading(true)
+            const res = await fetch('api/enroll', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ...form, discountPrice, finalPrice }),
+            })
 
-          {/* NAME */}
-          <div>
-            <input
-              type="text"
-              name="username"
-              placeholder="Full Name"
-              onChange={handleChange}
-              className={`w-full p-3 rounded-lg bg-white text-black border-2 ${errors.name ? "border-red-500" : "border-gray-400"
-                } outline-none focus:ring-2 focus:ring-[#da2721]`}
+            console.log(res)
+            if (res.ok) {
+                setIsModalOpen(true)
+                setLoading(false)
+                setForm({
+                    username: "",
+                    phone: "",
+                    email: "",
+                    modeOfLearning: "",
+                    course: "",
+                    price:""
+                });
+
+                setErrors({});
+
+            }
+            if (res.status == 400) {
+                newErrors.error = "Email used already"
+                setErrors(newErrors)
+                setLoading(false)
+            }
+
+            if (res.status == 500) {
+                newErrors.serverError = "Server Error: Network Timed Out"
+                setErrors(newErrors)
+                setLoading(false)
+            }
+
+
+        }
+
+        catch (err) {
+            setErrors(err.message)
+            console.log("this is the error", err)
+        }
+    };
+
+
+
+
+    return (
+        <div className="">
+
+            <main className="min-h-screen bg-white flex items-center justify-center px-6 py-10">
+
+                <div className="w-full max-w-xl bg-white p-8 rounded-2xl border border-gray-200 shadow-lg">
+
+                    <img src="/images-removebg-preview.png" className="h-10 mx-auto mb-4" />
+
+                    <h1 className="text-sm  md:text-lg lg:text-3xl font-bold text-center text-black mb-2">
+                        Enroll in a Course
+                    </h1>
+
+                    <p className="text-center text-gray-600 mb-6 text-sm">
+                        Claim your Easter discount before it expires
+                    </p>
+
+                    <form onSubmit={handleSubmit} className="space-y-5">
+                        {errors.serverError && <p className="text-red-500 text-sm mt-1">{errors.serverError}</p>}
+
+
+                        {/* NAME */}
+                        <div>
+                            <input
+                                type="text"
+                                name="username"
+                                placeholder="Full Name"
+                                onChange={handleChange}
+                                value={form.username ? form.username :''}
+                                className={`w-full p-3 rounded-lg bg-white text-black border-2 ${errors.name ? "border-red-500" : "border-gray-400"
+                                    } outline-none focus:ring-2 focus:ring-[#da2721]`}
+                            />
+                            {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
+                        </div>
+
+                        {/* PHONE */}
+                        <div>
+                            <input
+                                type="tel"
+                                name="phone"
+                                placeholder="Phone Number"
+                                onChange={handleChange}
+                                value={form.phone ? form.phone :''}
+                                className={`w-full p-3 rounded-lg bg-white text-black border-2 ${errors.phone ? "border-red-500" : "border-gray-400"
+                                    } outline-none focus:ring-2 focus:ring-[#da2721]`}
+                            />
+                            {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
+                        </div>
+
+                        {/* EMAIL */}
+                        <div>
+                            <input
+                                type="email"
+                                name="email"
+                                placeholder="Email Address"
+                                onChange={handleChange}
+                                value={form.email ? form.email :''}
+                                className={`w-full p-3 rounded-lg bg-white text-black border-2 ${errors.email || errors.error ? "border-red-500" : "border-gray-400"
+                                    } outline-none focus:ring-2 focus:ring-[#da2721]`}
+                            />
+                            {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+                            {errors.error && <p className="text-red-500 text-sm mt-1">{errors.error}</p>}
+                        </div>
+
+                        {/* MODE */}
+                        <div>
+                            <select
+                                name="modeOfLearning"
+                                onChange={handleChange}
+                                className={`w-full p-3 rounded-lg bg-white text-black border ${errors.mode ? "border-red-500" : "border-gray-400"
+                                    } outline-none focus:ring-2 focus:ring-[#da2721]`}
+                            >
+                                <option value="">Mode of Learning</option>
+                                <option value="online">Online</option>
+                                <option value="inPerson">In Person</option>
+                            </select>
+                            {errors.mode && <p className="text-red-500 text-sm mt-1">{errors.mode}</p>}
+                        </div>
+
+                        {/* COURSE */}
+                        <div>
+                            <select
+                                name="course"
+                                value={form.course ? form.course: ''}
+                                onChange={handleCourseChange} // Use a specific handler for courses
+                                className={`w-full p-3 rounded-lg bg-white text-black border ${errors.course ? "border-red-500" : "border-gray-400"
+                                    } outline-none focus:ring-2 focus:ring-[#da2721]`}
+                            >
+                                <option value="">Select Course</option>
+                                {courses.map((c) => (
+                                    <option key={c.id} value={c.courseName}>
+                                        {c.courseName} - ₦{c.price.toLocaleString()}
+                                    </option>
+                                ))}
+                            </select>
+                            {errors.course && <p className="text-red-500 text-sm mt-1">{errors.course}</p>}
+                        </div>
+
+                        {
+                            form.course && (
+                                <div className="bg-gray-600 p-3 rounded-md">
+                                    <p className="text-md text-white py-2 ">Applied Discount :<span className="font-semibold">{discountPrice}</span>%</p>
+                                    <p className="text-md text-white">Discount Price : <span className="font-semibold">₦{finalPrice.toLocaleString()}</span></p>
+                                </div>
+                            )
+                        }
+
+
+                        <button
+                            type="submit"
+                            disabled={loading}
+                            className={`w-full py-3 ${loading ? 'bg-[#801d1a]' : 'bg-[#da2721]'}  text-white rounded-lg font-semibold shadow-md hover:scale-105 transition`}
+                        >
+                            {loading ? "Processing..." : "Enroll Now"}
+                        </button>
+
+                    </form>
+                </div>
+
+
+
+
+
+            </main>
+
+            <SuccessModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
             />
-            {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
-          </div>
-
-          {/* PHONE */}
-          <div>
-            <input
-              type="tel"
-              name="phone"
-              placeholder="Phone Number"
-              onChange={handleChange}
-              className={`w-full p-3 rounded-lg bg-white text-black border-2 ${errors.phone ? "border-red-500" : "border-gray-400"
-                } outline-none focus:ring-2 focus:ring-[#da2721]`}
-            />
-            {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
-          </div>
-
-          {/* EMAIL */}
-          <div>
-            <input
-              type="email"
-              name="email"
-              placeholder="Email Address"
-              onChange={handleChange}
-              className={`w-full p-3 rounded-lg bg-white text-black border-2 ${errors.email ? "border-red-500" : "border-gray-400"
-                } outline-none focus:ring-2 focus:ring-[#da2721]`}
-            />
-            {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
-          </div>
-
-          {/* MODE */}
-          <div>
-            <select
-              name="modeOfLearning"
-              onChange={handleChange}
-              className={`w-full p-3 rounded-lg bg-white text-black border ${errors.mode ? "border-red-500" : "border-gray-400"
-                } outline-none focus:ring-2 focus:ring-[#da2721]`}
-            >
-              <option value="">Mode of Learning</option>
-              <option value="online">Online</option>
-              <option value="inPerson">In Person</option>
-            </select>
-            {errors.mode && <p className="text-red-500 text-sm mt-1">{errors.mode}</p>}
-          </div>
-
-          {/* COURSE */}
-          <div>
-            <select
-              name="course"
-              onChange={handleChange}
-              className={`w-full p-3 rounded-lg bg-white text-black border ${errors.course ? "border-red-500" : "border-gray-400"
-                } outline-none focus:ring-2 focus:ring-[#da2721]`}
-            >
-              <option value="">Select Course</option>
-              {courses.map((c, i) => (
-                <option key={i} value={c}>{c}</option>
-              ))}
-            </select>
-            {errors.course && <p className="text-red-500 text-sm mt-1">{errors.course}</p>}
-          </div>
-
-          <button
-            type="submit"
-            className="w-full py-3 bg-[#da2721] text-white rounded-lg font-semibold shadow-md hover:scale-105 transition"
-          >
-            Submit Application
-          </button>
-
-        </form>
-      </div>
-
-    </main>
-  );
+        </div>
+    );
 }

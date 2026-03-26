@@ -133,7 +133,7 @@ export default function Enroll() {
             type="submit"
             className="w-full py-3 bg-[#da2721] text-white rounded-lg font-semibold shadow-md hover:scale-105 transition"
           >
-            Submit Application
+            Login
           </button>
 
         </form>
