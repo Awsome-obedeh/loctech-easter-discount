@@ -62,9 +62,9 @@ export default function Home() {
     <main className="min-h-screen bg-gray-100 text-black px-6 py-6">
 
       <div className="flex justify-between items-center">
-        {/* <img src="/images-removebg-preview.png" className="h-6" /> */}
-        <Image src="/images-removebg-preview.png" width={200} height={400} alt="logog" className="h-5 w-4 object-center"></Image>
-        <p className="text-lg md:text-2xl lg:text-3xl tracking-widest text-black">Easter Luck Is Here</p>
+        <img src="/images-removebg-preview.png" className="h- w-40 object-contain object-center" />
+        {/* <Image src="/images-removebg-preview.png" width={4700} height={4070} alt="logo" className="object-center"></Image> */}
+        <p className="text-sm md:text-lg lg:text-xl tracking-widest text-black">Easter Luck Is Here</p>
       </div>
 
       {
@@ -208,7 +208,7 @@ export default function Home() {
       </AnimatePresence>
 
       <div className=" text-black/50 mt-20 fixed bottom-0 mx-auto flex justify-center w-full">
-      <p className="text-center text-xs md:text-xl lg:text-2xl"> © 2026 Loctech. All rights reserved.</p> 
+      <p className="text-center text-xs md:text-md lg:text-lg"> © 2026 Loctech IT Trainig. All rights reserved.</p> 
       </div>
 
     </main>
