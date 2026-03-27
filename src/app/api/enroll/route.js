@@ -7,10 +7,10 @@ export async function POST(req) {
   try {
     await dbConnect();
     const data = await req.json();
-    const { email, username, course,coursePrice,discountPrice, finalPrice, modeOfLearning } = data; 
-    console.log(email, username, course,coursePrice,discountPrice, finalPrice, modeOfLearning)
+    const { email, username, course,coursePrice,discountPrice, finalPrice, modeOfLearning,location } = data; 
+    // console.log(email, username, course,coursePrice,discountPrice, finalPrice, modeOfLearning)
 
-    // 1. IMPROVED: Case-insensitive email check
+  
     const isEmailExists = await Users.findOne({ 
       email:  email.toLowerCase() 
     });
@@ -49,5 +49,50 @@ export async function POST(req) {
       { error: error.message || "Internal Server Error" }, 
       { status }
     );
+  }
+}
+
+
+
+
+export async function GET(req) {
+  try {
+
+    const token = req.cookies.get('token')?.value;
+    if (!token) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    await dbConnect();
+
+
+    const { searchParams } = new URL(req.url);
+    const page = parseInt(searchParams.get("page")) || 1;
+    const limit = parseInt(searchParams.get("limit")) || 20;
+    const location = searchParams.get("location") || "all";
+
+    
+    let query = {};
+    if (location !== "all") {
+      // Use regex 'i' for case-insensitive matching
+      query.location = { $regex: new RegExp(location, "i") };
+    }
+
+    // 3. Execute Pagination logic
+    const skip = (page - 1) * limit;
+
+    const [users, total] = await Promise.all([
+      Users.find(query).sort({ createdAt: -1 }).skip(skip).limit(limit),
+      Users.countDocuments(query)
+    ]);
+
+    return NextResponse.json({
+      users,
+      pagination: {
+        total,
+        page,
+        pages: Math.ceil(total / limit),
+        hasMore: skip + users.length < total
+      }
+    });
+  } catch (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

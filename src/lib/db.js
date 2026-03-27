@@ -14,7 +14,7 @@ if (!cached) {
 
 async function dbConnect() {
   if (cached.conn){
-    console.log("cached conn:", cached.conn)
+    // console.log("cached conn:", cached.conn)
     return cached.conn;
 
   }

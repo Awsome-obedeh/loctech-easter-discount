@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { useSearchParams } from 'next/navigation';
+
+import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 export default function Enroll() {
   
@@ -12,21 +14,11 @@ export default function Enroll() {
   });
 
   const [errors, setErrors] = useState({});
+  const [error, setError] = useState();
+  
+    const [loading, setLoading] = useState(false);
+    const router = useRouter();
 
-  const courses = [
-    "UI/UX Design",
-    "Data Analysis",
-    "Cybersecurity",
-    "Cloud Computing Amazon Web Service",
-    "Cloud Computing Microsoft Azure",
-    "Full-Stack Web Development with Python and Django",
-    "Data Analysis With Excel",
-    "Data Analysis With Python and SQL",
-    "Machine Learning With Python",
-    "Data Analysis with Power BI",
-    "Graphics Design",
-    "Digital Marketing"
-  ];
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -62,23 +54,26 @@ export default function Enroll() {
     }
 
     // send api
-    try {
+   try {
+      const res = await fetch("/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({...form}),
+      });
 
-      const res = await fetch('api/enroll', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...form, discountPrice }),
-      })
+      const data = await res.json();
 
-      console.log(res)
-      if(res.status==400){
-        setErrors("This email is existing already")
+      if (res.ok) {
+        //
+        router.push("/users");
+        router.refresh(); // Forces Next.js to re-check the middleware
+      } else {
+        setError(data.message || "Invalid email or password");
       }
-    }
-
-    catch (err) {
-      setErrors(err.message)
-      console.log("this is the error", err)
+    } catch (err) {
+      setErrors("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -87,26 +82,29 @@ export default function Enroll() {
 
       <div className="w-full max-w-xl bg-white p-8 rounded-2xl border border-gray-200 shadow-lg">
 
-        <img src="/images-removebg-preview.png" className="h-10 mx-auto mb-4" />
+        
+         <div className="text-center mb-8">
+                  <Image src="/images-removebg-preview.png" width={120} height={40} alt="Logo" className="mx-auto mb-4" />
+                  <h1 className="text-3xl font-bold text-gray-900">Admin Login</h1>
+                  <p className="text-gray-500 mt-2">Access the enrollment dashboard</p>
+                </div>
 
-        <h1 className="text-3xl font-bold text-center text-black mb-2">
-            Loctech's Easter Discount Panel
-        </h1>
-
-        <p className="text-center text-gray-600 mb-6 text-sm">
-         Login to see Leads
-        </p>
-
-        <form onSubmit={handleSubmit} className="space-y-5">
+        <form onSubmit={handleSubmit} className="space-y-6">
+           {error && (
+            <div className="bg-red-50 text-red-600 p-4 rounded-xl text-sm border border-red-100 text-center">
+              {error}
+            </div>
+          )}
 
           {/* NAME */}
           <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
             <input
               type="text"
               name="email"
               placeholder="Email"
               onChange={handleChange}
-              className={`w-full p-3 rounded-lg bg-white text-black border-2 ${errors.email ? "border-red-500" : "border-gray-400"
+              className={`w-full p-4 rounded-xl border border-gray-300 outline-none focus:ring-2 focus:ring-red-500 transition-all ${errors.email ? "border-red-500" : "border-gray-400"
                 } outline-none focus:ring-2 focus:ring-[#da2721]`}
             />
             {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
@@ -114,12 +112,13 @@ export default function Enroll() {
 
           {/* PHONE */}
           <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
             <input
               type="password"
               name="password"
               placeholder="Password"
               onChange={handleChange}
-              className={`w-full p-3 rounded-lg bg-white text-black border-2 ${errors.password ? "border-red-500" : "border-gray-400"
+              className={`w-full p-4 rounded-xl border border-gray-300 outline-none focus:ring-2 focus:ring-red-500 transition-all ${errors.password ? "border-red-500" : "border-gray-400"
                 } outline-none focus:ring-2 focus:ring-[#da2721]`}
             />
             {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}

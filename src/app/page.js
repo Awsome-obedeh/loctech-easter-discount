@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react"; 
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 import Image from "next/image";
@@ -15,7 +15,7 @@ export default function Home() {
     { img: "/egg-cyan.png", name: "GET AHEAD", glow: "#ffffff" },
   ];
 
-  
+
   useEffect(() => {
     const saved = localStorage.getItem("loctech-easter");
 
@@ -28,15 +28,16 @@ export default function Home() {
   }, []);
 
   const handlePick = (i) => {
-    
+
     if (selected !== null || revealed) return;
 
     setSelected(i);
 
     setTimeout(() => {
-      
+
       // confetti
       const value = Math.floor(Math.random() * 11) + 30;
+       
       setDiscount(value);
       setRevealed(true);
 
@@ -61,32 +62,27 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-gray-100 text-black px-6 py-6">
 
-      <div className="flex justify-between items-center">
-        <img src="/images-removebg-preview.png" className="h- w-40 object-contain object-center" />
-        {/* <Image src="/images-removebg-preview.png" width={4700} height={4070} alt="logo" className="object-center"></Image> */}
-        <p className="text-sm md:text-lg lg:text-xl tracking-widest text-black">Easter Luck Is Here</p>
-      </div>
 
       {
-        revealed==false && (
-           <div className="text-center mt-20">
-        <div className="inline-block px-4 py-1 text-xs border border-black/20 rounded-full text-black/80 mb-6">
-          LIMITED TIME OFFER
-        </div>
+        revealed == false && (
+          <div className="text-center mt-20">
+            <div className="inline-block px-4 py-1 text-xs border border-black/20 rounded-full text-black/80 mb-6">
+              LIMITED TIME OFFER
+            </div>
 
-        <h1 className="text-5xl md:text-6xl font-bold leading-tight">
-          Unlock Your <br />
-          Easter <span className="text-[#da2721]">Surprise</span>
-        </h1>
+            <h1 className="text-5xl md:text-6xl font-bold leading-tight">
+              Unlock Your <br />
+              Easter <span className="text-[#da2721]">Surprise</span>
+            </h1>
 
-        <p className="text-black/70 mt-4 max-w-md mx-auto">
-          Pick one egg and get an exclusive discount on our IT courses.
-        </p>
-      </div>
+            <p className="text-black/70 mt-4 max-w-md mx-auto">
+              Pick one egg and get an exclusive discount on our IT courses.
+            </p>
+          </div>
         )
       }
 
-     
+
 
       {/* EGGS */}
       <div className="flex justify-center gap-12 mt-16 text-black">
@@ -94,7 +90,7 @@ export default function Home() {
         {/*  OPTIONAL MESSAGE */}
         {revealed && (
           <p className="absolute -mt-10 text-xs md:text-xl lg:text-2xl text-black/50">
-            You’ve have claimed your Easter reward 
+            You’ve have claimed your Easter reward
           </p>
         )}
 
@@ -161,7 +157,7 @@ export default function Home() {
                   </div>
 
                   {selected === null && (
-                    <p className="text-xs text-black/60 tracking-widest">
+                    <p className="text-xs text-black/60 tracking-widest text-center">
                       {egg.name}
                     </p>
                   )}
@@ -195,7 +191,7 @@ export default function Home() {
                   Use this limited Easter discount to enroll in our IT program today.
                 </p>
 
-                <a href={`/enroll?d=${discount}`}>
+                <a href={`/enroll`}>
                   <button className="mt-5 px-6 py-3 bg-[#da2721] rounded-lg hover:scale-105 transition text-white">
                     Enroll Now
                   </button>
@@ -208,7 +204,7 @@ export default function Home() {
       </AnimatePresence>
 
       <div className=" text-black/50 mt-20 fixed bottom-0 mx-auto flex justify-center w-full">
-      <p className="text-center text-xs md:text-md lg:text-lg"> © 2026 Loctech IT Trainig. All rights reserved.</p> 
+        <p className="text-center text-xs md:text-md lg:text-lg"> © 2026 Loctech IT Trainig. All rights reserved.</p>
       </div>
 
     </main>

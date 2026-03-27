@@ -20,9 +20,16 @@ const UserSchema = new mongoose.Schema({
     required: [true, 'Phone number is required'],
   },
 
+  location:{
+    type:String,
+    required:[true, "Locationi is required"],
+    enum:['portHarcourt', 'enugu', 'remote']
+  },
+
   modeOfLearning: {
     type: String, 
-    required:[true, 'please enter mode of learning']
+    required:[true, 'please enter mode of learning'],
+    enum:['inPerson', 'online']
   },
 
   discountPrice: {

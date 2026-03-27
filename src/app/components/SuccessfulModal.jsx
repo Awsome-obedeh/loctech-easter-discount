@@ -7,7 +7,7 @@ export default function SuccessModal({ isOpen, onClose }) {
     <AnimatePresence>
       {isOpen && (
         /* The container: Fixed to the screen, centered, and on top (z-50) */
-        <div className="absolute inset-0 z-50 flex items-center justify-center p-4 bg-black">
+        <div className="min-h-full fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70">
           
           {/* 1. THE DARK BACKDROP */}
           <motion.div
