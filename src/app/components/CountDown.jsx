@@ -20,7 +20,7 @@ export default function Countdown({ onExpire }) {
             if (distance <= 0) {
                 clearInterval(timer);
                 setExpired(true);
-                if (onExpire) onExpire(); // Notify parent Home
+                if (onExpire) onExpire(); // notify Home
                 return;
             }
 
@@ -35,7 +35,6 @@ export default function Countdown({ onExpire }) {
         return () => clearInterval(timer);
     }, []);
 
-    // EXPIRED VIEW
     if (expired) {
         return (
             <div className="text-center mt-8">
@@ -46,7 +45,6 @@ export default function Countdown({ onExpire }) {
         );
     }
 
-    // ACTIVE COUNTDOWN
     return (
         <div className="flex justify-center gap-4 mt-8">
             {["days", "hours", "minutes", "seconds"].map((unit) => (

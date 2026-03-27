@@ -8,7 +8,7 @@ export default function Home() {
   const [selected, setSelected] = useState(null);
   const [revealed, setRevealed] = useState(false);
   const [discount, setDiscount] = useState(null);
-  const [isExpired, setIsExpired] = useState(false); // NEW: track expiry
+  const [isExpired, setIsExpired] = useState(false); // track expiry
 
   const eggs = [
     { img: "/egg-gold.png", name: "GET TRAINED", glow: "#da2721" },
@@ -52,7 +52,7 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-gray-100 text-black px-6 py-6">
-      {/* Pass callback to update isExpired */}
+      {/* Countdown with callback */}
       <Countdown onExpire={() => setIsExpired(true)} />
 
       {!revealed && (
@@ -89,7 +89,9 @@ export default function Home() {
                   onClick={() => handlePick(i)}
                   animate={{ y: [0, -10, 0] }}
                   transition={{ duration: 3, repeat: Infinity }}
-                  className="flex flex-col items-center gap-3 cursor-pointer"
+                  className={`flex flex-col items-center gap-3 cursor-pointer ${
+                    isExpired ? "pointer-events-none opacity-50" : ""
+                  }`} // GRAY OUT + disable click
                 >
                   <div className="relative group">
                     <div
