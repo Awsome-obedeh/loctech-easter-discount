@@ -24,13 +24,13 @@ export const courses = [
 
     },
 
-     {
+    {
         courseName: "Graphics Design",
         price: 161250,
         id: 5
 
     },
-    
+
 
     {
         courseName: "Certified Cybersecurity Technician (CCT)",
@@ -85,7 +85,7 @@ export const courses = [
         id: 14
     },
 
-     {
+    {
         courseName: "Advanced Excel",
         price: 80625,
         id: 15
@@ -116,14 +116,24 @@ export const courses = [
         id: 19
 
     },
-   
+
+    {
+        courseName: "Data Science Artificial Intelligence",
+        price: 537500,
+        id: 20
+    },
 
 
-   
     {
         courseName: "Digital Marketing",
         price: 215000,
-        id: 20
+        id: 21
     },
+    {
+        courseName: "Virtual Assistance",
+        price: 107500,
+        id: 22
+    },
+
 
 ];
