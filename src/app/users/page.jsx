@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import Logout from "../components/Logout";
 
 export default function UsersPage() {
     const [users, setUsers] = useState([]);
@@ -73,7 +74,7 @@ export default function UsersPage() {
     return (
 
         <div className="overflow-hidden">
-
+            <Logout/>
 
             <div className="px-3 flex flex-col md:flex-row justify-between items-center mb-8 gap-4  md:px-4">
                 <h1 className="text-2xl font-bold text-gray-800">Leads</h1>

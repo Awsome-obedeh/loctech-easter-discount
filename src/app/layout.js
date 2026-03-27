@@ -1,6 +1,8 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "./components/Navbar";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -17,7 +19,13 @@ export const metadata = {
   description: "Easter Luck is Here :Tap an Egg & Save Big!   ",
 };
 
-export default function RootLayout({ children }) {
+export default async function RootLayout({ children }) {
+  // const cookieStore = await cookies();
+  // const token = cookieStore.get('token');
+
+  // if (!token) {
+  //   redirect('/control');
+  // }
   return (
     <html lang="en">
       <body

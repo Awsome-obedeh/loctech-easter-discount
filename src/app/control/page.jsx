@@ -55,6 +55,7 @@ export default function Enroll() {
 
     // send api
    try {
+     setLoading(true)
       const res = await fetch("/api/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -130,9 +131,10 @@ export default function Enroll() {
 
           <button
             type="submit"
-            className="w-full py-3 bg-[#da2721] text-white rounded-lg font-semibold shadow-md hover:scale-105 transition"
+            disabled={loading}
+            className={`w-full py-3 ${ loading ? 'bg-red-400': 'bg-[#da2721]'} text-white rounded-lg font-semibold shadow-md hover:scale-105 transition`}
           >
-            Login
+            {loading ? 'logging In...' : "login"}
           </button>
 
         </form>

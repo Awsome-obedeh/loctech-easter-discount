@@ -4,6 +4,9 @@ import { NextResponse } from 'next/server';
 
 export async function GET(req) {
   try {
+
+    const token = req.cookies.get('token')?.value;
+        if (!token) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     await dbConnect();
     const { searchParams } = new URL(req.url);
     const location = searchParams.get("location") || "all";

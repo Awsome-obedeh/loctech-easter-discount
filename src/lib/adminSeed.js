@@ -19,6 +19,17 @@ async function seedAdmin() {
     await mongoose.connect(MONGODB_URI);
     console.log("Connected to MongoDB...");
 
+
+    
+    const AdminSchema = new mongoose.Schema({
+      username: String,
+      email: { type: String, unique: true },
+      password: { type: String },
+      role: { type: String, default: 'admin' }
+    });
+    
+    const Admin= mongoose.models.Admins || mongoose.model('Admin', AdminSchema);
+
     const adminEmail = process.env.ADMIN_SEED_EMAIL 
     const existingAdmin = await Admin.findOne({ email: adminEmail });
 
