@@ -242,13 +242,13 @@ export default function EnrollmentForm() {
                                 name="course"
                                 value={form.course ? form.course : ''}
                                 onChange={handleCourseChange} // Use a specific handler for courses
-                                className={`w-full p-3 rounded-lg bg-white text-black border ${errors.course ? "border-red-500" : "border-gray-400"
+                                className={`w-full space-y-3 p-3 rounded-lg bg-white text-black border ${errors.course ? "border-red-500" : "border-gray-400"
                                     } outline-none focus:ring-2 focus:ring-[#da2721]`}
                             >
                                 <option value="">Select Course</option>
                                 {courses.map((c) => (
-                                    <option key={c.id} value={c.courseName}>
-                                        {c.courseName} - ₦{c.price.toLocaleString()}
+                                    <option key={c.id} value={c.courseName} className="my-3 capitalize text-gray-600 text-sm border-b border-gray-100">
+                                        {c.courseName.toLowerCase()} - ₦{c.price.toLocaleString()}
                                     </option>
                                 ))}
                             </select>
