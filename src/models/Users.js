@@ -36,11 +36,16 @@ const UserSchema = new mongoose.Schema({
     type: String, 
     default: "30",
   },
+
+  finalPrice: {
+    type: String, 
+    required: [true, 'Final price is required'],
+  },
   enrolledAt: {
     type: Date,
     default: Date.now,
   },
-});
+},{timestamps: true });
 
 
 export default mongoose.models.User || mongoose.model('User', UserSchema);

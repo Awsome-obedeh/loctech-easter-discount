@@ -39,13 +39,15 @@ export default function UsersPage() {
             if (allUsers.length === 0) return alert("No data to export");
 
 
-            const headers = ["Full Name", "Email", "Phone", "Course", "Discount", "Mode Of Learning", "Date Enrolled"];
+            const headers = ["Full Name", "Email", "Phone", "Course", "Discount", "Price To Pay", "Mode Of Learning", "Date Enrolled"];
 
             const csvRows = allUsers.map(user => [
                 `"${user.username}"`,
                 `"${user.email}"`,
                 `"${user.phone}"`,
                 `"${user.course}"`,
+                `"${user.discount}"`,
+                `"${user.finalPrice}"`,
                 `"${user.modeOfLearning}"`,
                 `"${user.location}"`,
                 `"${new Date(user.createdAt).toLocaleDateString()}"`
@@ -74,7 +76,7 @@ export default function UsersPage() {
     return (
 
         <div className="overflow-hidden">
-            <Logout/>
+            <Logout />
 
             <div className="px-3 flex flex-col md:flex-row justify-between items-center mb-8 gap-4  md:px-4">
                 <h1 className="text-2xl font-bold text-gray-800">Leads</h1>
@@ -114,6 +116,7 @@ export default function UsersPage() {
                                 <th className="px-6 py-4">Phone</th>
                                 <th className="px-6 py-4">Course</th>
                                 <th className="px-6 py-4">Discount</th>
+                                <th className="px-6 py-4">Price To Pay</th>
                                 <th className="px-6 py-4">Location</th>
                                 <th className="px-6 py-4">Mode of learning</th>
                             </tr>
@@ -127,10 +130,11 @@ export default function UsersPage() {
                                     <td className="px-6 py-4 text-gray-600">{user.email}</td>
                                     <td className="px-6 py-4 text-gray-600">{user.phone}</td>
                                     <td className="px-6 py-4 text-gray-600">{user.course}</td>
-                                    <td className="px-6 py-4 text-gray-600">{user.discountPrice}</td>
+                                    <td className="px-6 py-4 font-semibold text-green-700 ">-{user.discountPrice}%</td>
+                                    <td className="px-6 py-4 text-gray-600">{user.finalPrice ? `₦${Number(user.finalPrice).toLocaleString()}` : 'N/A'}</td>
                                     <td className="px-6 py-4 text-gray-600">{user.location}</td>
                                     <td className="px-6 py-4">
-                                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${user.modeOfLearning === 'online' ? 'bg-blue-400 text-white' : 'bg-green-200 text-green-700'
+                                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${user.modeOfLearning === 'online' ? 'bg-blue-400 text-white' : 'bg-green-400 text-white -700'
                                             }`}>
                                             {user.modeOfLearning}
                                         </span>
@@ -149,33 +153,47 @@ export default function UsersPage() {
 
             </div>
 
-            <div className="md:hidden divide-y divide-gray-100">
+<div className="md:hidden divide-y divide-gray-100">
+  {users.map((user) => (
+    <div key={user._id} className="p-5 space-y-3 active:bg-gray-50 bg-slate-300 mt-3 ring-1 border-gray-700 rounded-lg">
+      <div className="flex justify-between items-start">
+        <div className="space-y-1">
+          <p className="text-sm font-bold text-gray-900">{user.username}</p>
+          <p className="text-xs text-gray-600">{user.email}</p>
+          <p className="text-xs text-gray-600">{user.phone}</p>
+        </div>
+        
+        {/* Dynamic Badge Color Logic */}
+        <span className={`px-2 py-1 rounded-full text-[10px] font-bold uppercase ${
+          user.modeOfLearning?.toLowerCase() === 'online' 
+            ? 'bg-blue-400 text-white' 
+            : 'bg-green-600 text-white'
+        }`}>
+          {user.modeOfLearning}
+        </span>
+      </div>
 
-                {users.map((user) => (
-                    <div key={user._id} className="p-5 space-y-3 active:bg-gray-50 bg-slate-300 mt-3 ring-1 border-gray-700">
-                        <div className="flex justify-between items-start">
-                            <div className="space-y-3">
-                                <p className="text-sm font-bold text-gray-900">{user.username}</p>
-                                <p className="text-xs ">{user.email}</p>
-                                <p className="text-xs ">{user.phone}</p>
-                            </div>
-                            <span className={`px-2 py-1 rounded-full text-[10px] font-bold uppercase ${'online' ? 'bg-blue-400 text-white' : 'bg-green-200 text-green-700'
-                                }`}>
-                                {user.modeOfLearning}
-                            </span>
-                        </div>
+      <div className="flex items-center justify-between pt-2 border-t border-gray-400">
+        <span className="text-xs">Enrolled Course:</span>
+        <span className="text-xs font-medium text-black">{user.course}</span>
+      </div>
 
-                        <div className="flex items-center justify-between pt-2 border-t border-gray-50">
-                            <span className="text-xs ">Enrolled Course:</span>
-                            <span className="text-xs font-medium text-black">{user.course}</span>
-                        </div>
-                        <div className="flex items-center justify-between pt-2 0">
-                            <span className="text-xs ">Discount:</span>
-                            <span className="text-xs font-medium text-black">{user.discountPrice}%</span>
-                        </div>
-                    </div>
-                ))}
-            </div>
+      <div className="flex items-center justify-between pt-2 border-t border-gray-400">
+        <span className="text-xs">Price To Pay:</span>
+        <span className="text-xs font-bold text-black">
+          {user.finalPrice 
+            ? Number(user.finalPrice).toLocaleString('en-NG', { style: 'currency', currency: 'NGN' }) 
+            : 'N/A'}
+        </span>
+      </div>
+
+      <div className="flex items-center justify-between pt-2 border-t border-gray-400">
+        <span className="text-xs">Discount:</span>
+        <span className="text-sm font-semibold  text-green-700">-{user.discountPrice}%</span>
+      </div>
+    </div>
+  ))}
+</div>
 
 
             {!loading && users.length === 0 && (

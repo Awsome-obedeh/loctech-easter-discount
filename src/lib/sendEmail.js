@@ -6,11 +6,23 @@ export async function sendEnrollmentEmail(userEmail, firstName, courseName, cour
 
   try {
 
+    const termsConditions = courseName === "Certified Cybersecurity Technician (CCT)" || "CERTIFIED ETHICAL HACKER (CEH)" ? `
+      Terms and Conditions: This discount is valid for the ${courseName} only.
+       It cannot be combined with any other offers or discounts. 
+       The discount is non-transferable and has no cash value. 
+       The discount must be used within the specified validity period, after which it will expire.
+        Loctech IT Training Institute reserves the right to modify or terminate this offer at any time without prior notice.`
+      : 
+      `Terms and Conditions: It cannot be combined with any other offers or discounts. 
+        The discount is non-transferable and has no cash value. 
+        The discount must be used within the specified validity period, after which it will expire. 
+        Loctech IT Training Institute reserves the right to modify or terminate this offer at any time without prior notice.
+      `;
 
     const transporter = nodemailer.createTransport({
 
-      service: 'gmail', // Or your preferred provider
-      port: 465,
+      service: process.env.EMAIL_HOST, // Or your preferred provider
+      port: process.env.EMAIL_PORT,
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
@@ -33,7 +45,7 @@ export async function sendEnrollmentEmail(userEmail, firstName, courseName, cour
         <h3 style="color:#333;">Happy Easter!</h3>
 
         <p style="font-size: 16px; color: #333; line-height: 2;">
-        Your Easter luck is here. You tapped an egg, and you have received a <span style="font-weight:600 ; font-size:18px">₦${discountPrice.toLocaleString()}%</span> discount for the course ${courseName}.
+        Your Easter luck is here. You tapped an egg, and you have received a <span style="font-weight:600 ; font-size:18px">${discountPrice.toLocaleString()}%</span> discount for the course ${courseName}.
         </p>
 
         <div style="background-color: #f9f9f9; padding: 15px; font-size:16px; border-radius: 10px; margin: 20px 0; line-height: 2;">
@@ -44,6 +56,9 @@ export async function sendEnrollmentEmail(userEmail, firstName, courseName, cour
 
         <p style="font-size: 16px; color: #333; line-height: 2;">
           Please note that this discount is valid until 18th April 2026. After this date, the discount will expire.  Take advantage of this opportunity and begin your tech journey with us.
+        </p>
+        <p style="font-size: 16px; color: #333; line-height: 2;">
+          ${termsConditions}
         </p>
         
        
